@@ -24,9 +24,23 @@ const getDetail = id => {
 
 // 新增
 const newBlog = (blogData = {}) => {
-	return {
-		id: 3,
-	}
+	const { title, content, author = '张三' } = blogData
+	const createTime = Date.now()
+
+	const sql = `
+		insert into blogs (title, content, createTime, author)
+		values ('${title}', '${content}', ${createTime}, '${author}')
+	`
+
+	return exec(sql).then(insertData => {
+		return {
+			id: insertData.insertID 
+		}
+	})
+
+	// return {
+	// 	id: 3,
+	// }
 }
 
 // 更新

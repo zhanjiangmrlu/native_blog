@@ -31,9 +31,9 @@ const handleBlogRouter = (req, res) => {
 
 	// 新增博客
 	if (method === 'POST' && path === `${API}/new`) {
-		const data = newBlog(req.body)
-
-		return new SucessModel(data)
+    req.body.author = 'zhangsan'
+    const result = newBlog(req.body)
+    return result.then(res => new SucessModel(res))
 	}
 
 	// 更新博客
