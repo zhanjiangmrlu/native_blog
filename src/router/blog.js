@@ -38,13 +38,15 @@ const handleBlogRouter = (req, res) => {
 
 	// 更新博客
 	if (method === 'POST' && path === `${API}/updated`) {
-		const result = updatedBlog(req.body)
+    req.body.author = 'zhangsan'
+		const result = updatedBlog(id, req.body)
 
-		if (result && id) {
-			return new SucessModel(result)
-		} else {
-			return new ErrorModel('更新博客失败')
-		}
+    return result.then(val => {
+      if (val) {
+        return new SucessModel()
+      }
+      return new ErrorModel('更新博客失败')
+    })
 	}
 
 	// 删除博客
