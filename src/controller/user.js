@@ -1,9 +1,11 @@
-const loginCheck = (username, password) => {
-  if (username && password) {
-    return true
-  }
+const { exec } = require('../db/mysql')
 
-  return false
+const loginCheck = (username, password) => {
+  const sql = `
+    select username, realname from users where username='${username}' and password='${password}'
+  `
+
+  return exec(sql).then(rows => rows[0] || {})
 }
 
 module.exports = {
