@@ -1,21 +1,18 @@
+const { exec } = require('../db/mysql')
+
 // 列表
-const getList = () => {
-	return [
-		{
-			id: 1,
-			title: '标题1',
-			content: '内容1',
-			createTime: 1637477628420,
-			author: '靓妹',
-		},
-		{
-			id: 2,
-			title: '标题2',
-			content: '内容2',
-			createTime: 1637477660699,
-			author: '靓仔',
-		},
-	]
+const getList = (author, keyword) => {
+	let sql = `select * from blogs where 1=1 `
+
+	if (author) {
+		sql += `and author='${author}' `
+	}
+	if (keyword) {
+		sql += `and title like '%${keyword}%' `
+	}
+	sql += `order by createtime desc;`
+
+	return exec(sql)
 }
 
 // 详情

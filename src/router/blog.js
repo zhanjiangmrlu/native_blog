@@ -13,7 +13,9 @@ const handleBlogRouter = (req, res)=> {
     const { author = '', keyword = '' } = query || {}
     const result = getList(author, keyword)
 
-    return new SucessModel(result)
+    return result.then(res => {
+      return new SucessModel(res)
+    })
   }
 
   // 博客详情
