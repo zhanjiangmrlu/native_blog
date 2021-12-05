@@ -53,14 +53,14 @@ const handleServer = (req, res) => {
 	// 解析 cookie
 	req.cookie = {}
 	const cookieStr = req.headers.cookie || '' // k1=v1;k2=v2;k3=v3
-	console.log('cookieStr',cookieStr);
+	// console.log('cookieStr',cookieStr);
 	cookieStr.split(';').forEach(item => {
 		if (!item) return
 		const arr = item.split('=')
 		const key = arr[0].trim()
 		const val = arr[1].trim()
 		req.cookie[key] = val
-		console.log('req.cookie', req.cookie);
+		// console.log('req.cookie', req.cookie);
 	})
 
 	// 解析 session （使用Redis）
@@ -105,9 +105,11 @@ const handleServer = (req, res) => {
 		const userResult  = handleUserRouter(req, res)
 		if (userResult) {
 			return userResult.then(userData => {
-				if (needSetCookie) {
+				// if (needSetCookie) {
+				// 	console.log('needSetCookie', needSetCookie);
+				console.log('userId', userId);
 					res.setHeader('Set-Cookie', `userid=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`)
-				}
+				// }
 				res.end(JSON.stringify(userData))
 			})
 		}
