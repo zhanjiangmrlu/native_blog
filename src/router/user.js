@@ -4,15 +4,17 @@ const { SucessModel, ErrorModel } = require('../model/resModel')
 const handleUserRouter = (req, res) => {
   const { method, path } = req
 
-  if (method === 'GET' && path === '/api/blog/login') {
-    const { username, password } = req.query
-    // const { username, password } = req.body
+  if (method === 'POST' && path === '/api/blog/login') {
+    // const { username, password } = req.query
+    const { username, password } = req.body
     const result = login(username, password)
 
+    console.log('session', req.session);
     return result.then(data => {
       if (data.username) {
         // 操作 cookie
         res.setHeader('Set-Cookie', `username=${data.username}; path=/`)
+        req.session.username = data.username
         return new SucessModel()
       } else {
         return new ErrorModel('登录失败')
@@ -20,9 +22,9 @@ const handleUserRouter = (req, res) => {
     })
   }
 
+  // 测试登录
   if (method === 'GET' && path === '/api/blog/login-test') {
-    console.log('req', req.cookie);
-    if (req?.cookie?.username) {
+    if (req.session.username) {
       return Promise.resolve(
         new SucessModel({
           session: req.session

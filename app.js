@@ -53,37 +53,28 @@ const handleServer = (req, res) => {
 	// 解析 cookie
 	req.cookie = {}
 	const cookieStr = req.headers.cookie || '' // k1=v1;k2=v2;k3=v3
-	// console.log('cookieStr',cookieStr);
 	cookieStr.split(';').forEach(item => {
 		if (!item) return
 		const arr = item.split('=')
 		const key = arr[0].trim()
 		const val = arr[1].trim()
 		req.cookie[key] = val
-		// console.log('req.cookie', req.cookie);
 	})
 
 	// 解析 session （使用Redis）
 	let needSetCookie = false
-	let userId = req.cookie.userId
-	if (userId) {
+	let userId = req.cookie.userid
+
+	if (!userId) {
 		if (!SESSION_DATA[userId]) {
 			SESSION_DATA[userId] = {}
 		}
 	} else {
-		userId = `${Date.now}_${Math.random()}`
+		needSetCookie = true
+		userId = `${Date.now()}_${Math.random()}`
 		SESSION_DATA[userId] = {}
 	}
 	req.session = SESSION_DATA[userId]
-	// if (!userId) {
-	// 	needSetCookie = true
-	// 	userId = `${Date.now}_${Math.random()}`
-	// }
-
-	// // 获取 session
-	// req.sessionId = userId
-
-	// console.log('req.session', req.session);
 
 	// 处理 post data
 	getPostData(req).then(postData => {
@@ -105,11 +96,9 @@ const handleServer = (req, res) => {
 		const userResult  = handleUserRouter(req, res)
 		if (userResult) {
 			return userResult.then(userData => {
-				// if (needSetCookie) {
-				// 	console.log('needSetCookie', needSetCookie);
-				console.log('userId', userId);
+				if (needSetCookie) {
 					res.setHeader('Set-Cookie', `userid=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`)
-				// }
+				}
 				res.end(JSON.stringify(userData))
 			})
 		}
